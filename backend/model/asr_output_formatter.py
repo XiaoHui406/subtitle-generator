@@ -1,5 +1,6 @@
 from model.transcription_segment import TranscriptionSegment
 from typing import List
+import json
 
 
 class ASROutputFormatter:
@@ -41,13 +42,16 @@ class ASROutputFormatter:
         self,
         segments: List[TranscriptionSegment]
     ) -> str:
-        ...
+        result: str = ''
+        for segment in segments:
+            result += f'{segment.text}\n'
+        return result
 
     def _to_json(
         self,
         segments: List[TranscriptionSegment]
     ) -> str:
-        ...
+        return json.dumps([segment.__dict__ for segment in segments], ensure_ascii=False)
 
     def _to_vtt(
         self,

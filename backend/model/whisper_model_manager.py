@@ -1,9 +1,9 @@
 from model.interface.asr_model_manager import ASRModelManager
 from model.transcription_segment import TranscriptionSegment
+from model.asr_output_formatter import ASROutputFormatter
 import whisper
 from whisper import Whisper
 from torch.cuda import is_available
-from registry import asr_output_formatter
 from typing import List
 
 
@@ -18,6 +18,7 @@ class WhisperModelManager(ASRModelManager):
         self.model: Whisper | None = None
         self.model_size: str = model_size
         self.device: str = 'cuda' if not device and is_available() else 'cpu'
+        self.asr_output_formatter: ASROutputFormatter = ASROutputFormatter()
 
     def load_model(self) -> None:
         self.model = whisper.load_model(
@@ -42,7 +43,7 @@ class WhisperModelManager(ASRModelManager):
                     end=item['end'],
                     text=item['text']
                 ))
-            formatted_result: str = asr_output_formatter.format(
+            formatted_result: str = self.asr_output_formatter.format(
                 output_format=output_format,
                 segments=segments
             )
