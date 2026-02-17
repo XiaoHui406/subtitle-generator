@@ -1,10 +1,6 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI
 import uvicorn
-import shutil
-import os
-from typing import List
 from registry import asr_model_manager
-from model.transcription_segment import TranscriptionSegment
 from router.asr_router import asr_router
 
 app = FastAPI()
