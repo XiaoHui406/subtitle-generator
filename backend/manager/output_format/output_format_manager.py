@@ -3,7 +3,7 @@ from typing import List
 import json
 
 
-class ASROutputFormatter:
+class OutputFormatManager:
     def format(self, output_format: str, segments: List[TranscriptionSegment]) -> str:
         match output_format:
             case "srt":
