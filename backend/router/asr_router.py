@@ -3,17 +3,21 @@ from typing import List
 import os
 import shutil
 from model.transcription_segment import TranscriptionSegment
-from registry import asr_model_manager
+from registry import asr_model_manager, asr_model_adapter
 
 
 asr_router = APIRouter(
     prefix='/asr',
-    tags=['asr']
+    tags=['语音识别']
 )
 
 
 @asr_router.get("/load_asr_model")
 def load_model(model_name: str, model_size: str) -> str:
+    asr_model_manager = asr_model_adapter.get_asr_model_manager(
+        model_name=model_name,
+        model_size=model_size
+    )
     asr_model_manager.load_model()
     return "load asr model successed"
 
