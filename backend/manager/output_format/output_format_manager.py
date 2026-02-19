@@ -4,7 +4,11 @@ import json
 
 
 class OutputFormatManager:
-    def format(self, output_format: str, segments: List[TranscriptionSegment]) -> str:
+    def format(
+        self,
+        output_format: str,
+        segments: List[TranscriptionSegment]
+    ) -> str:
         match output_format:
             case "srt":
                 return self._to_srt(segments=segments)
