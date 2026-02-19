@@ -1,9 +1,11 @@
 from fastapi import APIRouter, UploadFile
+from fastapi.exceptions import HTTPException
 from typing import List
 import os
 import shutil
 from model.transcription_segment import TranscriptionSegment
-from registry import asr_model_manager, asr_model_adapter
+import registry
+from model.load_asr_model_request import LoadASRModelRequest
 
 
 asr_router = APIRouter(
@@ -12,22 +14,19 @@ asr_router = APIRouter(
 )
 
 
-@asr_router.get("/load_asr_model")
-def load_model(
-    model_name: str,
-    device: str | None = None
-) -> str:
-    asr_model_manager = asr_model_adapter.get_asr_model_manager(
-        model_name=model_name,
-        device=device
+@asr_router.post("/load_model")
+def load_model(load_request: LoadASRModelRequest) -> str:
+    registry.asr_model_manager = registry.asr_model_adapter.get_asr_model_manager(
+        model_name=load_request.model_name,
+        device=load_request.device
     )
-    asr_model_manager.load_model()
+    registry.asr_model_manager.load_model()
     return "load asr model successed"
 
 
 @asr_router.get('/unload_model')
 def unload_model() -> str:
-    asr_model_manager.unload_model()
+    registry.asr_model_manager.unload_model()
     return "unload asr model successed"
 
 
@@ -37,7 +36,7 @@ def transcribe(file: UploadFile) -> List[TranscriptionSegment]:
     with open(temp_file, 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    result: List[TranscriptionSegment] = asr_model_manager.transcribe(
+    result: List[TranscriptionSegment] = registry.asr_model_manager.transcribe(
         audio=temp_file
     )
 
