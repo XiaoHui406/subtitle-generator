@@ -15,12 +15,10 @@ asr_router = APIRouter(
 @asr_router.get("/load_asr_model")
 def load_model(
     model_name: str,
-    model_size: str,
     device: str | None = None
 ) -> str:
     asr_model_manager = asr_model_adapter.get_asr_model_manager(
         model_name=model_name,
-        model_size=model_size,
         device=device
     )
     asr_model_manager.load_model()

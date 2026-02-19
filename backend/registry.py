@@ -5,6 +5,5 @@ from manager.asr.asr_model_adapter import ASRModelAdapter
 
 asr_model_adapter: ASRModelAdapter = ASRModelAdapter()
 asr_model_manager: ASRModelManager = asr_model_adapter.get_asr_model_manager(
-    model_name='OpenAI Whisper Small',
-    model_size='small'
+    model_name='FunASR SenseVoice Small'
 )

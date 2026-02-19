@@ -19,10 +19,10 @@ class ASRModelAdapter:
     def get_asr_model_manager(
         self,
         model_name: str,
-        model_size: str,
         device: str | None = None
     ) -> ASRModelManager:
         asr_model_config: ASRModelConfig = self.asr_model_config_map[model_name]
+        model_size: str = asr_model_config.size
         match asr_model_config.type:
             case 'whisper':
                 return WhisperModelManager(model_size=model_size, device=device)
