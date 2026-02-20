@@ -1,93 +1,51 @@
-from model.transcription_segment import TranscriptionSegment
-from typing import List
-import json
+from model.format_segment import FormatSegment
+from model.output_format import OutputFormatRequest, OutputFormatResponse
+from typing import List, Dict
+from manager.output_format.json_formatter import JsonFormatter
+from manager.output_format.lrc_formatter import LrcFormatter
+from manager.output_format.srt_formatter import SrtFormatter
+from manager.output_format.tsv_formatter import TsvFormatter
+from manager.output_format.txt_formatter import TxtFormatter
+from manager.output_format.vtt_formatter import VttFormatter
+from manager.output_format.interface.base_formatter import BaseFormatter
 
 
 class OutputFormatManager:
+    def __init__(self):
+        self._format_map: Dict[str, BaseFormatter] = {
+            "srt": SrtFormatter(),
+            "lrc": LrcFormatter(),
+            "txt": TxtFormatter(),
+            "json": JsonFormatter(),
+            "vtt": VttFormatter(),
+            "tsv": TsvFormatter(),
+        }
+
     def format(
         self,
-        output_format: str,
-        segments: List[TranscriptionSegment]
-    ) -> str:
-        match output_format:
-            case "srt":
-                return self._to_srt(segments=segments)
-            case "lrc":
-                return self._to_lrc(segments=segments)
-            case "txt":
-                return self._to_txt(segments=segments)
-            case "json":
-                return self._to_json(segments=segments)
-            case "vtt":
-                return self._to_vtt(segments=segments)
-            case "tsv":
-                return self._to_tsv(segments=segments)
-            case _:
-                raise ValueError(f"Unsupported format: {output_format}")
+        output_format_request: OutputFormatRequest
+    ) -> List[OutputFormatResponse]:
+        responses: List[OutputFormatResponse] = []
 
-    def _to_srt(self, segments: List[TranscriptionSegment]) -> str:
-        lines: List[str] = []
-        for i, segment in enumerate(segments, 1):
-            start = self._seconds_to_srt_time(segment.start)
-            end = self._seconds_to_srt_time(segment.end)
-            lines.append(f"{i}")
-            lines.append(f"{start} --> {end}")
-            lines.append(segment.text)
-            lines.append("")
-        return "\n".join(lines)
+        output_formats: List[str] = output_format_request.output_formats
+        segments: List[FormatSegment] = output_format_request.segments
+        include_text: bool = output_format_request.include_text
+        include_translate_text: bool = output_format_request.include_translate_text
 
-    def _seconds_to_srt_time(self, seconds: float) -> str:
-        hours = int(seconds // 3600)
-        minutes = int((seconds % 3600) // 60)
-        secs = int(seconds % 60)
-        millis = int((seconds % 1) * 1000)
-        return f"{hours:02d}:{minutes:02d}:{secs:02d},{millis:03d}"
+        for output_format in output_formats:
+            formatter: BaseFormatter = self._format_map[output_format]
 
-    def _to_lrc(self, segments: List[TranscriptionSegment]) -> str:
-        lines: List[str] = []
-        for segment in segments:
-            start = self._seconds_to_lrc_time(segment.start)
-            lines.append(f"[{start}]{segment.text}")
-        return "\n".join(lines)
+            formatted_text: str = formatter.format(
+                segments=segments,
+                include_text=include_text,
+                include_translate_text=include_translate_text
+            )
 
-    def _seconds_to_lrc_time(self, seconds: float) -> str:
-        minutes = int(seconds // 60)
-        secs = int(seconds % 60)
-        centis = int((seconds % 1) * 100)
-        return f"{minutes:02d}:{secs:02d}.{centis:02d}"
+            responses.append(
+                OutputFormatResponse(
+                    output_format=output_format,
+                    formated_text=formatted_text
+                )
+            )
 
-    def _to_txt(self, segments: List[TranscriptionSegment]) -> str:
-        result: str = ""
-        for segment in segments:
-            result += f"{segment.text}\n"
-        return result
-
-    def _to_json(self, segments: List[TranscriptionSegment]) -> str:
-        return json.dumps(
-            [segment.__dict__ for segment in segments], ensure_ascii=False
-        )
-
-    def _to_vtt(self, segments: List[TranscriptionSegment]) -> str:
-        lines: List[str] = ["WEBVTT", ""]
-        for segment in segments:
-            start = self._seconds_to_vtt_time(segment.start)
-            end = self._seconds_to_vtt_time(segment.end)
-            lines.append(f"{start} --> {end}")
-            lines.append(segment.text)
-            lines.append("")
-        return "\n".join(lines)
-
-    def _seconds_to_vtt_time(self, seconds: float) -> str:
-        hours = int(seconds // 3600)
-        minutes = int((seconds % 3600) // 60)
-        secs = int(seconds % 60)
-        millis = int((seconds % 1) * 1000)
-        return f"{hours:02d}:{minutes:02d}:{secs:02d}.{millis:03d}"
-
-    def _to_tsv(self, segments: List[TranscriptionSegment]) -> str:
-        lines: List[str] = ["start\tend\ttext"]
-        for segment in segments:
-            start_ms = int(segment.start * 1000)
-            end_ms = int(segment.end * 1000)
-            lines.append(f"{start_ms}\t{end_ms}\t{segment.text}")
-        return "\n".join(lines)
+        return responses
