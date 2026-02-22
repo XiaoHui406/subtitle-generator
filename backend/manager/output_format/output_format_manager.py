@@ -1,6 +1,6 @@
 from model.format_segment import FormatSegment
 from model.output_format import OutputFormatRequest, OutputFormatResponse
-from typing import List, Dict
+from typing import List, Dict, Type
 from manager.output_format.json_formatter import JsonFormatter
 from manager.output_format.lrc_formatter import LrcFormatter
 from manager.output_format.srt_formatter import SrtFormatter
@@ -12,13 +12,13 @@ from manager.output_format.interface.base_formatter import BaseFormatter
 
 class OutputFormatManager:
     def __init__(self):
-        self._format_map: Dict[str, BaseFormatter] = {
-            "srt": SrtFormatter(),
-            "lrc": LrcFormatter(),
-            "txt": TxtFormatter(),
-            "json": JsonFormatter(),
-            "vtt": VttFormatter(),
-            "tsv": TsvFormatter(),
+        self._format_map: Dict[str, Type[BaseFormatter]] = {
+            "srt": SrtFormatter,
+            "lrc": LrcFormatter,
+            "txt": TxtFormatter,
+            "json": JsonFormatter,
+            "vtt": VttFormatter,
+            "tsv": TsvFormatter,
         }
 
     def format(
@@ -33,8 +33,8 @@ class OutputFormatManager:
         include_translate_text: bool = output_format_request.include_translate_text
 
         for output_format in output_formats:
-            formatter: BaseFormatter = self._format_map[output_format]
-
+            formatter_type: Type[BaseFormatter] = self._format_map[output_format]
+            formatter: BaseFormatter = formatter_type()
             formatted_text: str = formatter.format(
                 segments=segments,
                 include_text=include_text,
