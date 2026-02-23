@@ -16,7 +16,7 @@ class ASRModelAdapter:
         for model in data.models:
             self.asr_model_config_map[model.name] = model
 
-    def get_asr_model_manager(
+    def get_model_manager(
         self,
         model_name: str,
         device: str | None = None

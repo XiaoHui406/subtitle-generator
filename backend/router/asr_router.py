@@ -1,5 +1,4 @@
 from fastapi import APIRouter, UploadFile
-from fastapi.exceptions import HTTPException
 from typing import List
 import os
 import shutil
@@ -16,7 +15,7 @@ asr_router = APIRouter(
 
 @asr_router.post("/load_model")
 def load_model(load_request: LoadASRModelRequest) -> str:
-    registry.asr_model_manager = registry.asr_model_adapter.get_asr_model_manager(
+    registry.asr_model_manager = registry.asr_model_adapter.get_model_manager(
         model_name=load_request.model_name,
         device=load_request.device
     )
