@@ -1,6 +1,5 @@
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeBase
 
 engine = create_async_engine('sqlite:///./database.database')
