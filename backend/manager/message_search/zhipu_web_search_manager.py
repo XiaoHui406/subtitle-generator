@@ -1,7 +1,10 @@
 import httpx
+from manager.message_search.interface.web_search_manager import WebSearchManager
+from typing import List, Dict
+from model.web_search_result import WebSearchResult
 
 
-class ZhipuWebSearchManager:
+class ZhipuWebSearchManager(WebSearchManager):
     def __init__(
         self,
         apikey: str
@@ -11,8 +14,8 @@ class ZhipuWebSearchManager:
     async def search(
         self,
         content: str,
-        search_count: int = 10
-    ):
+        search_count: int = 5
+    ) -> List[WebSearchResult]:
         async with httpx.AsyncClient() as client:
             search_result = await client.post(
                 url='https://open.bigmodel.cn/api/paas/v4/web_search',
@@ -27,4 +30,17 @@ class ZhipuWebSearchManager:
                     "count": search_count
                 }
             )
-        return search_result.json()
+        search_response: Dict = search_result.json()
+        result: List[WebSearchResult] = []
+        for item in search_response['search_result']:
+            result.append(
+                WebSearchResult(
+                    content=f'id={item['refer']}, title={item['title']} content={item['content']}',
+                    metadata={
+                        "id": item['refer'],
+                        "title": item['title'],
+                        "content": item['content']
+                    }
+                )
+            )
+        return result
