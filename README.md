@@ -1,6 +1,6 @@
 # 项目概述
 
-- **项目名称**：subtitle-translator
+- **项目名称**：subtitle-generator
 - **技术栈**：前端 Vue3，后端 FastAPI + SQLite
 
 # 核心功能模块
