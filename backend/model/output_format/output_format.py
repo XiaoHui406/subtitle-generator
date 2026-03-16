@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from model.format_segment import FormatSegment
+from model.output_format.format_segment import FormatSegment
 
 
 class OutputFormatRequest(BaseModel):
