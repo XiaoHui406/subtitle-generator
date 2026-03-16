@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from manager.output_format.output_format_manager import OutputFormatManager
-from model.output_format import OutputFormatRequest, OutputFormatResponse
+from model.output_format.output_format import OutputFormatRequest, OutputFormatResponse
 from typing import List
 
 output_format_router = APIRouter(

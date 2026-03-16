@@ -1,5 +1,5 @@
 from typing import List, Dict
-from model.asr_model_config import ASRModelConfig, ASRModelJsonConfig
+from model.asr.asr_model_config import ASRModelConfig, ASRModelJsonConfig
 from manager.asr.interface.asr_model_manager import ASRModelManager
 from manager.asr.whisper_model_manager import WhisperModelManager
 from manager.asr.funasr_model_manager import FunasrModelManager

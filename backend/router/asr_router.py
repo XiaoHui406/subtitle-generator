@@ -2,9 +2,9 @@ from fastapi import APIRouter, UploadFile
 from typing import List
 import os
 import shutil
-from model.transcription_segment import TranscriptionSegment
+from model.asr.transcription_segment import TranscriptionSegment
 import registry
-from model.load_asr_model_request import LoadASRModelRequest
+from model.asr.load_asr_model_request import LoadASRModelRequest
 
 
 asr_router = APIRouter(

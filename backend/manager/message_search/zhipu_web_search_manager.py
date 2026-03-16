@@ -1,7 +1,7 @@
 import httpx
 from manager.message_search.interface.web_search_manager import WebSearchManager
 from typing import List, Dict
-from model.web_search_result import WebSearchResult
+from backend.model.web_search.web_search_result import WebSearchResult
 
 
 class ZhipuWebSearchManager(WebSearchManager):
@@ -35,7 +35,7 @@ class ZhipuWebSearchManager(WebSearchManager):
         for item in search_response['search_result']:
             result.append(
                 WebSearchResult(
-                    content=f'id={item['refer']}, title={item['title']} content={item['content']}',
+                    content=f'id={item['refer']} title={item['title']} content={item['content']}',
                     metadata={
                         "id": item['refer'],
                         "title": item['title'],

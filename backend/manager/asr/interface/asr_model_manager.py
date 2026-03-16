@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from model.transcription_segment import TranscriptionSegment
+from model.asr.transcription_segment import TranscriptionSegment
 
 
 class ASRModelManager(ABC):

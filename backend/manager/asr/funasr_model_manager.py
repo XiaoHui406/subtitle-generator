@@ -1,5 +1,5 @@
 from manager.asr.interface.asr_model_manager import ASRModelManager
-from model.transcription_segment import TranscriptionSegment
+from model.asr.transcription_segment import TranscriptionSegment
 from torch.cuda import is_available
 from typing import List
 from funasr import AutoModel
